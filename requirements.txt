@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+jinja2
+asyncpg
+python-dotenv
+requests
+python-multipart
