@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+  </head>
+  <body>
+    <form hx-post="/learners" hx-target="#response" hx-swap="innerHTML">
+      <input type="text" name="name" placeholder="Enter learner name" required />
+      <button type="submit">Add Learner</button>
+    </form>
+
+    <div id="response"></div>
+  </body>
+</html>
