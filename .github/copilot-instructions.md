@@ -2,18 +2,32 @@
 ```
 htmx/
 ├── src/
+│   ├── sandbox/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── db.py
+│   │   └── routes.py
+│   ├── fin/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── db.py
+│   │   └── routes.py
+│   └── shared/
+│       └── utils.py
+├── templates/
+│   ├── base.html
+│   ├── fat.html
+│   ├── form.html
+│   ├── index.html
+│   ├── components/
+│   ├── fin/
 │   └── sandbox/
-│       ├── __init__.py
-│       ├── main.py
-│       ├── db.py
-│       ├── routes/
-│       │   └── learners.py
-│       └── templates/
 ├── tests/
 │   └── test_learners.py
 ├── .env
+├── .env.example
 ├── requirements.txt
+├── README.md
 ├── .vscode/
-│   └── launch.json
-└── pyproject.toml or setup.cfg (optional)
+└── __pycache__/
 ```
