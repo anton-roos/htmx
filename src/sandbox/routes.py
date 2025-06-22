@@ -14,7 +14,7 @@ async def index(request: Request):
 async def form(request: Request):
     return templates.TemplateResponse("sandbox/form.html", {"request": request})
 
-@router.get("/iss-location", response_class=HTMLResponse)
+@router.get("/location", response_class=HTMLResponse)
 async def get_iss_location():
     res = requests.get("http://api.open-notify.org/iss-now.json")
     data = res.json()

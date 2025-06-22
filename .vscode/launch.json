@@ -27,7 +27,12 @@
       "cwd": "${workspaceFolder}/src",
       "envFile": "${workspaceFolder}/.env",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Uvicorn running on http://localhost:(\\d+)",
+        "uriFormat": "http://localhost:%s"
+      }
     }
   ]
 }

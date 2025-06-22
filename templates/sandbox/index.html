@@ -1,12 +1,19 @@
-<html>
+{% extends "base.html" %}
 
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.5/dist/htmx.min.js"></script>
-</head>
+{% block title %}ISS Location{% endblock %}
 
-<body>
-  <button hx-get="/iss-location" hx-target="#location">Get ISS Location</button>
-  <div id="location"></div>
-</body>
-
-</html>
+{% block content %}
+<div class="min-h-screen flex items-center justify-center p-6 bg-gray-100">
+  <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+    <h1 class="text-2xl font-bold mb-4 text-center">ISS Current Location</h1>
+    <button
+      hx-get="/location"
+      hx-target="#location"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition"
+    >
+      Get ISS Location
+    </button>
+    <div id="location" class="mt-4 text-center text-gray-800"></div>
+  </div>
+</div>
+{% endblock %}
