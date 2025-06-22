@@ -1,21 +1,31 @@
-<div id="map-container" data-lat="{{ lat }}" data-lng="{{ lng }}" class="relative w-full max-w-md mx-auto overflow-visible">
-  <img src="/static/world.svg" alt="World Map" class="w-full h-auto block" />
+<div class="overflow-x-auto flex justify-center">
+  <div id="map-container" data-lat="{{ lat }}" data-lng="{{ lng }}" class="relative inline-block w-[800px] h-auto mx-auto">
+    <img src="/static/world.svg" alt="World Map" class="block h-auto w-auto max-w-none" />
+  </div>
 </div>
 <p class="mt-4 text-center text-gray-700">Latitude: {{ lat }}, Longitude: {{ lng }}</p>
 <script>
   (function() {
     const container = document.getElementById('map-container');
+    const img = container.querySelector('img');
     const lat = parseFloat(container.dataset.lat);
     const lng = parseFloat(container.dataset.lng);
     const dot = document.createElement('div');
     dot.className = 'absolute bg-red-500 rounded-full';
-    const top = (90 - lat) / 180 * 100;
-    const left = (lng + 180) / 360 * 100;
     dot.style.width = '12px';
     dot.style.height = '12px';
-    dot.style.top = top + '%';
-    dot.style.left = left + '%';
-    dot.style.transform = 'translate(-50%, -50%)';
-    container.appendChild(dot);
+    dot.style.position = 'absolute';
+    img.addEventListener('load', () => {
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      const x = (lng + 180) / 360 * w;
+      const y = (90 - lat) / 180 * h;
+      const scaleX = img.offsetWidth / w;
+      const scaleY = img.offsetHeight / h;
+      dot.style.left = (x * scaleX) + 'px';
+      dot.style.top = (y * scaleY) + 'px';
+      dot.style.transform = 'translate(-50%, -50%)';
+      container.appendChild(dot);
+    });
   })();
 </script>
