@@ -15,11 +15,16 @@ async def form(request: Request):
     return templates.TemplateResponse("sandbox/form.html", {"request": request})
 
 @router.get("/location", response_class=HTMLResponse)
-async def get_iss_location():
+async def location(request: Request):
+    # Fetch current ISS position
     res = requests.get("http://api.open-notify.org/iss-now.json")
-    data = res.json()
-    pos = data["iss_position"]
-    return f"<div>Latitude: {pos['latitude']}, Longitude: {pos['longitude']}</div>"
+    data = res.json()["iss_position"]
+    lat = float(data["latitude"])
+    lng = float(data["longitude"])
+    return templates.TemplateResponse(
+        "sandbox/location.html",
+        {"request": request, "lat": lat, "lng": lng},
+    )
 
 @router.post("/learners", response_class=HTMLResponse)
 async def create_learner(request: Request, name: str = Form(...)):
