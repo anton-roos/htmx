@@ -14,10 +14,6 @@ venv/
 *.egg-info/
 pip-wheel-metadata/
 
-# VSCode & editor settings
-.vscode/
-.idea/
-*.code-workspace
 
 # Environment variables and secrets
 .env
