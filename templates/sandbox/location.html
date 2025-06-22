@@ -1,31 +1,74 @@
-<div class="overflow-x-auto flex justify-center">
-  <div id="map-container" data-lat="{{ lat }}" data-lng="{{ lng }}" class="relative inline-block w-[800px] h-auto mx-auto">
-    <img src="/static/world.svg" alt="World Map" class="block h-auto w-auto max-w-none" />
-  </div>
+<div class="flex justify-center">
+  <div id="globeVizContainer" data-lat="{{ lat }}" data-lng="{{ lng }}" class="w-full h-[24rem] max-w-4xl mx-auto"></div>
 </div>
 <p class="mt-4 text-center text-gray-700">Latitude: {{ lat }}, Longitude: {{ lng }}</p>
-<script>
-  (function() {
-    const container = document.getElementById('map-container');
-    const img = container.querySelector('img');
-    const lat = parseFloat(container.dataset.lat);
-    const lng = parseFloat(container.dataset.lng);
-    const dot = document.createElement('div');
-    dot.className = 'absolute bg-red-500 rounded-full';
-    dot.style.width = '12px';
-    dot.style.height = '12px';
-    dot.style.position = 'absolute';
-    img.addEventListener('load', () => {
-      const w = img.naturalWidth;
-      const h = img.naturalHeight;
-      const x = (lng + 180) / 360 * w;
-      const y = (90 - lat) / 180 * h;
-      const scaleX = img.offsetWidth / w;
-      const scaleY = img.offsetHeight / h;
-      dot.style.left = (x * scaleX) + 'px';
-      dot.style.top = (y * scaleY) + 'px';
-      dot.style.transform = 'translate(-50%, -50%)';
-      container.appendChild(dot);
-    });
-  })();
+<script type="module">
+  import * as THREE from 'https://esm.sh/three@0.150.1';
+  import { OrbitControls } from 'https://esm.sh/three@0.150.1/examples/jsm/controls/OrbitControls.js';
+  
+  let container, scene, camera, renderer, controls, marker;
+  
+  function initGlobe() {
+    container = document.getElementById('globeVizContainer');
+    const lat0 = parseFloat(container.dataset.lat);
+    const lng0 = parseFloat(container.dataset.lng);
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    // Scene setup
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 200);
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    container.innerHTML = '';
+    container.appendChild(renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = true;
+    // Earth mesh
+    const loader = new THREE.TextureLoader();
+    const earth = new THREE.Mesh(
+      new THREE.SphereGeometry(50, 64, 64),
+      new THREE.MeshPhongMaterial({ map: loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg') })
+    );
+    scene.add(earth);
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    dirLight.position.set(5, 3, 5);
+    scene.add(dirLight);
+    // ISS marker
+    marker = new THREE.Mesh(
+      new THREE.BoxGeometry(2, 2, 2),
+      new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    );
+    scene.add(marker);
+    updateMarker(lat0, lng0);
+    animate();
+    // Poll position every 5s
+    setInterval(async () => {
+      const res = await fetch('/location-data');
+      const data = await res.json();
+      const lat = parseFloat(data.iss_position.latitude);
+      const lng = parseFloat(data.iss_position.longitude);
+      updateMarker(lat, lng);
+    }, 5000);
+  }
+  
+  function updateMarker(lat, lng) {
+    const phi = (90 - lat) * Math.PI / 180;
+    const theta = lng * Math.PI / 180;
+    const r = 50;
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.cos(phi);
+    const z = r * Math.sin(phi) * Math.sin(theta);
+    marker.position.set(x, y, z);
+  }
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  
+  initGlobe();
 </script>

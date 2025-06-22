@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Form
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 import requests
 
@@ -25,6 +25,11 @@ async def location(request: Request):
         "sandbox/location.html",
         {"request": request, "lat": lat, "lng": lng},
     )
+
+@router.get("/location-data")
+async def location_data():
+    res = requests.get("http://api.open-notify.org/iss-now.json")
+    return JSONResponse(res.json())
 
 @router.post("/learners", response_class=HTMLResponse)
 async def create_learner(request: Request, name: str = Form(...)):
